@@ -100,12 +100,29 @@ const registerHandler: RequestHandler = async (req, res, next) => {
 
 // Ruta por defecto
 app.get('/', (req, res) => {
-  res.json({ message: 'API funcionando' });
+  res.send(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>API Backend</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          a { color: blue; text-decoration: none; }
+          a:hover { text-decoration: underline; }
+        </style>
+      </head>
+      <body>
+        <h1>API funcionando</h1>
+        <p><a href="/api/users">👉 Click aquí para ver usuarios registrados</a></p>
+      </body>
+    </html>
+  `);
 });
 
-// Ruta para ver usuarios (añade esto antes de app.use('/api/auth', router))
+// Ruta para ver usuarios
 app.get('/api/users', async (req, res) => {
   try {
+    console.log('Intentando obtener usuarios...');
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -113,9 +130,15 @@ app.get('/api/users', async (req, res) => {
         username: true,
         role: true,
         createdAt: true
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     });
-    res.json(users);
+    console.log('Usuarios encontrados:', users);
+    
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(users, null, 2));
   } catch (error) {
     console.error('Error al obtener usuarios:', error);
     res.status(500).json({ error: 'Error al obtener usuarios' });
@@ -131,4 +154,5 @@ app.use('/api/auth', router);
 app.listen(3000, () => {
   console.log('Backend corriendo en http://localhost:3000');
   console.log('Frontend corriendo en http://localhost:5173');
+  console.log('Para ver usuarios, visita: http://localhost:3000/api/users');
 }); 
