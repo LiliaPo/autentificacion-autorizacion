@@ -137,8 +137,49 @@ app.get('/api/users', async (req, res) => {
     });
     console.log('Usuarios encontrados:', users);
     
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(users, null, 2));
+    // Enviar respuesta HTML en lugar de JSON
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Usuarios Registrados</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+            th { background-color: #f8f9fa; }
+            tr:hover { background-color: #f5f5f5; }
+            .back-link { margin-bottom: 20px; display: block; }
+          </style>
+        </head>
+        <body>
+          <a href="/" class="back-link">← Volver</a>
+          <h1>Usuarios Registrados</h1>
+          <table>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Fecha de Registro</th>
+                <th>ID</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${users.map(user => `
+                <tr>
+                  <td>${user.username}</td>
+                  <td>${user.email}</td>
+                  <td>${user.role}</td>
+                  <td>${new Date(user.createdAt).toLocaleString('es-ES')}</td>
+                  <td>${user.id}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `);
   } catch (error) {
     console.error('Error al obtener usuarios:', error);
     res.status(500).json({ error: 'Error al obtener usuarios' });
@@ -151,8 +192,10 @@ router.post('/register', registerHandler);
 
 app.use('/api/auth', router);
 
-app.listen(3000, () => {
-  console.log('Backend corriendo en http://localhost:3000');
+const PORT = 3001;
+
+app.listen(PORT, () => {
+  console.log(`Backend corriendo en http://localhost:${PORT}`);
   console.log('Frontend corriendo en http://localhost:5173');
-  console.log('Para ver usuarios, visita: http://localhost:3000/api/users');
+  console.log(`Para ver usuarios, visita: http://localhost:${PORT}/api/users`);
 }); 
