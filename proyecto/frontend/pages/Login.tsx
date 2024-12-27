@@ -1,46 +1,72 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+
+interface LoginResponse {
+  token: string;
+  user: {
+    id: string;
+  };
+}
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/login', {
+      const response = await axios.post<LoginResponse>('http://localhost:3001/api/auth/login', {
         email,
         password
       });
-      localStorage.setItem('token', response.data.token);
-      alert('Login exitoso!');
-    } catch (error) {
-      alert('Error al iniciar sesión');
+      login(response.data.token, response.data.user.id);
+      navigate('/dashboard');
+    } catch (error: any) {
+      setError(error.response?.data?.error || 'Error al iniciar sesión');
     }
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: '40px auto' }}>
-      <h1>Iniciar Sesión</h1>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ padding: '8px' }}
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ padding: '8px' }}
-        />
-        <button type="submit" style={{ padding: '10px', background: 'blue', color: 'white', border: 'none' }}>
+    <div className="auth-container">
+      <h1 className="auth-title">Iniciar Sesión</h1>
+      {error && <div className="alert alert-error">{error}</div>}
+      
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="password">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button type="submit" className="button save">
           Iniciar Sesión
         </button>
       </form>
+
+      <Link to="/register" className="auth-link">
+        ¿No tienes cuenta? &nbsp;Regístrate
+      </Link>
     </div>
   );
 } 

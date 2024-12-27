@@ -1,0 +1,179 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #f8f9fd;
+  color: #2d3436;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+nav {
+  background: white;
+  padding: 1rem 2rem;
+  margin-bottom: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+nav a {
+  color: #2d3436;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+nav a:hover {
+  background: #6c5ce7;
+  color: white;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.auth-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* Estilos del formulario */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #2d3436;
+}
+
+input, select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid #e1e1e1;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #6c5ce7;
+  box-shadow: 0 0 0 3px rgba(108,92,231,0.1);
+}
+
+button, .button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.save, .button-primary {
+  background: #6c5ce7;
+  color: white;
+}
+
+.save:hover, .button-primary:hover {
+  background: #5b4cc4;
+  transform: translateY(-2px);
+}
+
+.delete, .button-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.delete:hover, .button-danger:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.alert-error {
+  background: #dc3545;
+  color: white;
+}
+
+.alert-success {
+  background: #28a745;
+  color: white;
+}
+
+/* Estilos para los requisitos de contraseña */
+.password-requirements {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.requirement {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.2rem 0;
+}
+
+.requirement::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e1e1e1;
+}
+
+.requirement.valid::before {
+  background: #6c5ce7;
+}
+
+.requirement.invalid::before {
+  background: #dc3545;
+}
+
+/* Estilos para enlaces de autenticación */
+.auth-link {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  color: #6c5ce7;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-link:hover {
+  color: #5b4cc4;
+}
+
+.auth-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2d3436;
+  font-size: 1.5rem;
+  font-weight: 600;
+} 

@@ -3,6 +3,7 @@ import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import path from 'path';
 
 const app = express();
 const router = Router();
@@ -10,6 +11,7 @@ const prisma = new PrismaClient();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Error Handler Middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -138,108 +140,46 @@ app.get('/api/users', async (req: Request, res: Response, next: NextFunction) =>
       <html>
         <head>
           <title>Usuarios Registrados</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-            th { background-color: #f8f9fa; }
-            tr:hover { background-color: #f5f5f5; }
-            .back-link { margin-bottom: 20px; display: block; }
-            .button { 
-              padding: 6px 12px;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-              margin-right: 5px;
-            }
-            .save { background: #28a745; color: white; }
-            .delete { background: #dc3545; color: white; }
-            input, select { 
-              padding: 6px;
-              border: 1px solid #ddd;
-              border-radius: 4px;
-              width: 90%;
-            }
-            .editing { background-color: #fff3cd; }
-          </style>
-          <script>
-            async function deleteUser(id) {
-              if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
-                try {
-                  const response = await fetch(\`/api/users/\${id}\`, {
-                    method: 'DELETE'
-                  });
-                  if (response.ok) {
-                    location.reload();
-                  } else {
-                    alert('Error al eliminar usuario');
-                  }
-                } catch (error) {
-                  console.error('Error:', error);
-                  alert('Error al eliminar usuario');
-                }
-              }
-            }
-
-            async function saveUser(id, row) {
-              try {
-                const username = row.querySelector('.username-input').value;
-                const email = row.querySelector('.email-input').value;
-                const role = row.querySelector('.role-select').value;
-
-                const response = await fetch(\`/api/users/\${id}\`, {
-                  method: 'PUT',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({ username, email, role })
-                });
-                
-                if (response.ok) {
-                  location.reload();
-                } else {
-                  alert('Error al actualizar usuario');
-                }
-              } catch (error) {
-                console.error('Error:', error);
-                alert('Error al actualizar usuario');
-              }
-            }
-          </script>
+          <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+          <link rel="stylesheet" href="/styles.css">
         </head>
         <body>
-          <a href="/" class="back-link">← Volver</a>
-          <h1>Usuarios Registrados</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Fecha de Registro</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${users.map(user => `
-                <tr id="row-${user.id}">
-                  <td><input type="text" class="username-input" value="${user.username}" required></td>
-                  <td><input type="email" class="email-input" value="${user.email}" required></td>
-                  <td>
-                    <select class="role-select">
-                      <option value="USER" ${user.role === 'USER' ? 'selected' : ''}>USER</option>
-                      <option value="ADMIN" ${user.role === 'ADMIN' ? 'selected' : ''}>ADMIN</option>
-                    </select>
-                  </td>
-                  <td>${new Date(user.createdAt).toLocaleString('es-ES')}</td>
-                  <td>
-                    <button onclick="saveUser('${user.id}', document.getElementById('row-${user.id}'))" class="button save">Guardar</button>
-                    <button onclick="deleteUser('${user.id}')" class="button delete">Eliminar</button>
-                  </td>
+          <div class="container">
+            <a href="/" class="back-link">← Volver</a>
+            <h1>Usuarios Registrados</h1>
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Contraseña</th>
+                  <th>Fecha de Registro</th>
+                  <th>Acciones</th>
                 </tr>
-              `).join('')}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                ${users.map(user => `
+                  <tr id="row-${user.id}">
+                    <td><input type="text" class="username-input" value="${user.username}" required></td>
+                    <td><input type="email" class="email-input" value="${user.email}" required></td>
+                    <td>
+                      <select class="role-select">
+                        <option value="USER" ${user.role === 'USER' ? 'selected' : ''}>USER</option>
+                        <option value="ADMIN" ${user.role === 'ADMIN' ? 'selected' : ''}>ADMIN</option>
+                      </select>
+                    </td>
+                    <td><input type="password" class="password-input" placeholder="Nueva contraseña"></td>
+                    <td>${new Date(user.createdAt).toLocaleString('es-ES')}</td>
+                    <td class="actions">
+                      <button onclick="saveUser('${user.id}', document.getElementById('row-${user.id}'))" class="button save">Guardar</button>
+                      <button onclick="deleteUser('${user.id}')" class="button delete">Eliminar</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
         </body>
       </html>
     `);
@@ -334,10 +274,16 @@ const editUserFormHandler: RequestHandler<UserParams> = async (req, res, next) =
 
 const updateUserHandler: RequestHandler<UserParams> = async (req, res, next) => {
   try {
-    const { username, email, role } = req.body;
+    const { username, email, role, password } = req.body;
+    const updateData: any = { username, email, role };
+    
+    if (password) {
+      updateData.password = await bcryptjs.hash(password, 10);
+    }
+
     await prisma.user.update({
       where: { id: req.params.id },
-      data: { username, email, role }
+      data: updateData
     });
     res.json({ message: 'Usuario actualizado correctamente' });
     return;
